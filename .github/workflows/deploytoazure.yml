@@ -1,0 +1,45 @@
+# This workflow will build a .NET project
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net
+
+name: 'Deploy to Azure Web App'
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+env:
+  AZURE_WEBAPP_PACKAGE_PATH: '.'
+  AZURE_WEBAPP_NAME: WebApp0134783
+  
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: 6.0.x
+        
+    - name: Restore dependencies
+      run: dotnet restore
+      
+    - name: Build
+      run: dotnet build --configuration release
+
+    - name: Publish
+      run: dotnet publish - Release -o '${{env.AZURE_WEBAPP_PACKAGE_PATH}}/myapp'
+
+    - name: Deploy
+      uses: Azure/webapps-deploy@v3.0.0
+      with:
+        app-name: '${{env.AZURE_WEBAPP_NAME}}'
+        slot-name: WebAppSlot01
+        publish-profile: '${{secrets.AZURE_WEBAPP_PUBLISH_PROFILE}}'
+        package: '${{env.AZURE_WEBAPP_PACKAGE_PATH}}/myapp'
+    
