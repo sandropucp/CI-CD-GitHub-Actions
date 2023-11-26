@@ -33,7 +33,7 @@ jobs:
       run: dotnet build --configuration release
 
     - name: Publish
-      run: dotnet publish - Release -o '${{env.AZURE_WEBAPP_PACKAGE_PATH}}/myapp'
+      run: dotnet publish c- Release -o '${{env.AZURE_WEBAPP_PACKAGE_PATH}}/myapp'
 
     - name: Deploy
       uses: Azure/webapps-deploy@v3.0.0
